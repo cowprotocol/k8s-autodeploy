@@ -1,0 +1,27 @@
+{
+   "push_data":{
+      "pushed_at":1519724029,
+      "images":[
+
+      ],
+      "tag":"develop",
+      "pusher":"gnosis"
+   },
+   "callback_url":"https://registry.hub.docker.com/u/gnosispm/k8s-autodeploy/hook/2jd5i3c2e0dci4gbac44ccbaf1f3ggif5/",
+   "repository":{
+      "status":"Active",
+      "description":"",
+      "is_trusted":false,
+      "full_description":null,
+      "repo_url":"https://hub.docker.com/r/gnosispm/k8s-autodeploy",
+      "owner":"gnosispm",
+      "is_official":false,
+      "is_private":false,
+      "name":"k8s-autodeploy",
+      "namespace":"gnosispm",
+      "star_count":0,
+      "comment_count":0,
+      "date_created":1518002407,
+      "repo_name":"gnosispm/k8s-autodeploy"
+   }
+}
