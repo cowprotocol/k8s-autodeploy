@@ -21,6 +21,13 @@ const deployment = {
   },
   applyConfig (deploymentName, config) {
     return executeCommand('kubectl', ['apply', '-f', '-'], {input: config})
+  },
+  restart (deploymentName) {
+    return this.getConfig(deploymentName).then(config => {
+      return this.delete(deploymentName).then(() => {
+        return this.applyConfig(deploymentName, config)
+      })
+    })
   }
 }
 
@@ -33,18 +40,20 @@ const getDeploymentName = (serviceName, dockerTag) => {
   }
 }
 
-router.post('/:serviceName', function (req, res, next) {
+router.post('/:services', function (req, res, next) {
   const dockerTag = req.body.push_data.tag
-  const serviceName = req.params.serviceName
-  let deploymentName = getDeploymentName(serviceName, dockerTag)
+  const services = req.params.services.split(',')
 
-  deployment.getConfig(deploymentName).then(config => {
-    return deployment.delete(deploymentName).then(() => {
-      return deployment.applyConfig(deploymentName, config).then(() => {
-        res.status(200).json({})
-      })
+  Promise.all(
+    services.map(service => {
+      let deploymentName = getDeploymentName(service, dockerTag)
+      return deployment.restart(deploymentName)
     })
-  }).catch(error => { res.status(500).json({'error': error}) })
+  ).then(
+    result => { res.status(200).json({}) }
+  ).catch(error => {
+    res.status(500).json({'error': error})
+  })
 })
 
 module.exports = router
