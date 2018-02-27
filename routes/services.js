@@ -40,7 +40,7 @@ const getDeploymentName = (serviceName, dockerTag) => {
   }
 }
 
-router.post('/:services', function (req, res, next) {
+router.post('/:services/restart', function (req, res, next) {
   const dockerTag = req.body.push_data.tag
   const services = req.params.services.split(',')
 
