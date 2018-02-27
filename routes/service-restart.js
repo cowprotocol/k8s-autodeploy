@@ -1,24 +1,26 @@
 const express = require('express')
 const router = express.Router()
-const exec = require('child_process').exec
+const spawnSync = require('child_process').spawnSync
 
-const processCommandOutput = command => {
-  return new Promise((resolve, reject) => {
-    exec(command, (e, stdo, stde) => {
-      e ? reject(stde) : resolve(stdo)
-    })
-  })
+const executeCommand = (command, args, options = undefined) => {
+  let result = spawnSync(command, args, options)
+
+  if (result.status === 0) {
+    return Promise.resolve(result.stdout.toString())
+  } else {
+    return Promise.reject(result.stderr.toString())
+  }
 }
 
 const deployment = {
-  saveConfig (deploymentName, outputDir) {
-    return processCommandOutput(`kubectl get deployment ${deploymentName} -o yaml > ${outputDir}/${deploymentName}.yaml`)
+  getConfig (deploymentName) {
+    return executeCommand('kubectl', ['get', 'deployment', deploymentName, '-o', 'yaml'])
   },
   delete (deploymentName) {
-    return processCommandOutput(`kubectl delete deployment ${deploymentName}`)
+    return executeCommand('kubectl', ['delete', 'deployment', deploymentName])
   },
-  applyConfig (deploymentName, configDir) {
-    return processCommandOutput(`cat ${configDir}/${deploymentName}.yaml | kubectl apply -f -`)
+  applyConfig (deploymentName, config) {
+    return executeCommand('kubectl', ['apply', '-f', '-'], {input: config})
   }
 }
 
@@ -31,17 +33,14 @@ const getDeploymentName = (serviceName, dockerTag) => {
   }
 }
 
-/* GET home page. */
 router.post('/:serviceName', function (req, res, next) {
-  // const images = req.body.push_data.images
   const dockerTag = req.body.push_data.tag
   const serviceName = req.params.serviceName
-  const deploymentDir = '/tmp'
   let deploymentName = getDeploymentName(serviceName, dockerTag)
 
-  deployment.saveConfig(deploymentName, deploymentDir).then(result => {
+  deployment.getConfig(deploymentName).then(config => {
     return deployment.delete(deploymentName).then(() => {
-      return deployment.applyConfig(deploymentName, deploymentDir).then(() => {
+      return deployment.applyConfig(deploymentName, config).then(() => {
         res.status(200).json({})
       })
     })
