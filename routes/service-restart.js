@@ -1,28 +1,43 @@
-const express = require('express');
-const router = express.Router();
-const exec = require('child_process').exec;
+const express = require('express')
+const router = express.Router()
+const exec = require('child_process').exec
 
 /* GET home page. */
-router.get('/:podName', function(req, res, next) {
+router.post('/:serviceName', function (req, res, next) {
+  const processCommandOutput = command => {
+    return new Promise((resolve, reject) => {
+      exec(command, (e, stdo, stde) => {
+        e ? reject(stde) : resolve(stdo)
+      })
+    })
+  }
 
-    const processCommandOutput = command => {
-        return new Promise((resolve, reject) => {
-            exec(command, (e, stdo, stde) => {                
-                e ? reject(stde):resolve(stdo);
-            });
-        });
-    }
+  // const images = req.body.push_data.images
+  const tag = req.body.push_data.tag
+  const serviceName = req.params.serviceName
+  let deploymentName
 
-    const apps = req.params.podName.split(',');
-    Promise.all(
-        apps.map(appName => 
-            processCommandOutput(`kubectl get deployment ${appName} -o yaml | kubectl replace force -f -`)
-        )
-    ).then(
-        result => {res.status(200).json({restart: result})}        
-    ).catch(
-        e => {res.status(400).json({error: e})},
-    )
-});
+  switch (tag) {
+    case 'develop':
+      deploymentName = `dev-${serviceName}`
+      break
+    case 'master':
+      deploymentName = `staging-${serviceName}`
+      break
+    default:
+      break
+  }
 
-module.exports = router;
+  processCommandOutput(`kubectl get deployment ${deploymentName} -o yaml > /tmp/${deploymentName}.yaml`)
+  .then(result => {
+    return processCommandOutput(`kubectl delete deployment ${deploymentName}`).then(() => {
+      return processCommandOutput(`cat /tmp/${deploymentName}.yaml | kubectl apply -f -`).then(() => {
+        return res.status(200).json({'restart': 'OK'})
+      })
+    })
+  }).catch(
+    error => { res.status(400).json({'error': error}) }
+  )
+})
+
+module.exports = router
