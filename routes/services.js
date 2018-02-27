@@ -13,14 +13,22 @@ const executeCommand = (command, args, options = undefined) => {
 }
 
 const deployment = {
-  getConfig (deploymentName) {
-    return executeCommand('kubectl', ['get', 'deployment', deploymentName, '-o', 'yaml'])
+  applyConfig (deploymentName, config) {
+    return executeCommand('kubectl', ['apply', '-f', '-'], {input: config})
   },
   delete (deploymentName) {
     return executeCommand('kubectl', ['delete', 'deployment', deploymentName])
   },
-  applyConfig (deploymentName, config) {
-    return executeCommand('kubectl', ['apply', '-f', '-'], {input: config})
+  getConfig (deploymentName) {
+    return executeCommand('kubectl', ['get', 'deployment', deploymentName, '-o', 'yaml'])
+  },
+  getNameFromDockerTag (serviceName, dockerTag) {
+    switch (dockerTag) {
+      case 'develop':
+        return `dev-${serviceName}`
+      case 'master':
+        return `staging-${serviceName}`
+    }
   },
   restart (deploymentName) {
     return this.getConfig(deploymentName).then(config => {
@@ -31,22 +39,13 @@ const deployment = {
   }
 }
 
-const getDeploymentName = (serviceName, dockerTag) => {
-  switch (dockerTag) {
-    case 'develop':
-      return `dev-${serviceName}`
-    case 'master':
-      return `staging-${serviceName}`
-  }
-}
-
 router.post('/:services/restart', function (req, res, next) {
   const dockerTag = req.body.push_data.tag
   const services = req.params.services.split(',')
 
   Promise.all(
     services.map(service => {
-      let deploymentName = getDeploymentName(service, dockerTag)
+      let deploymentName = deployment.getNameFromDockerTag(service, dockerTag)
       return deployment.restart(deploymentName)
     })
   ).then(
