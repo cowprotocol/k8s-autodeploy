@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "DEBUG=k8s-autodeploy:* node ./bin/www",
+    "start": "NODE_ENV='production' DEBUG=k8s-autodeploy:* node ./bin/www",
+    "dev": "DEBUG=k8s-autodeploy:* node ./bin/www",
+    "debug": "DEBUG=* node ./bin/www",
     "build": "docker build -t k8s-autodeploy . && docker tag k8s-autodeploy gnosispm/k8s-autodeploy:develop",
     "dist": "docker push gnosispm/k8s-autodeploy:develop"
   },
