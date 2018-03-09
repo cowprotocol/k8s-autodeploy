@@ -27,7 +27,7 @@ const deployment = {
     switch (dockerTag) {
       case 'develop':
         return `dev-${serviceName}`
-      case 'master':
+      case 'staging':
         return `staging-${serviceName}`
     }
   },
