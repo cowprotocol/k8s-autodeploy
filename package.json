@@ -1,6 +1,6 @@
 {
   "name": "k8s-autodeploy",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "NODE_ENV='production' DEBUG=k8s-autodeploy:* node ./bin/www",
