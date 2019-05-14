@@ -56,7 +56,7 @@ router.post('/:services/restart', function (req, res, next) {
           debug('Deployment restarted => %s', deploymentName)
         })
       } else {
-        return Promise.reject(new Error(`There is not deployment defined for this docker tag => ${dockerTag}`))
+        return Promise.reject(new Error(`This image tag is not supported for autodeploying => ${dockerTag}`))
       }
     })
   ).then(result => {
