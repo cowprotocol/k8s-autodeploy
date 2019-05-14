@@ -1,4 +1,4 @@
-from node:9.5.0-alpine
+FROM node:10.15.3-alpine
 
 # Install Kubectl binary
 RUN apk update && \
