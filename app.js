@@ -10,6 +10,9 @@ var services = require('./routes/services');
 
 var app = express();
 
+// Disable "X-Powered-by" express header
+app.disable('x-powered-by');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
