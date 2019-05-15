@@ -74,8 +74,8 @@ router.post('/:services/restart', function (request, response, next) {
       debug('[WARNING] Reason => %s', error)
       response.status(200).json({})
     } else {
-      debug('[ERROR] Deployment couldn\'t restart. Reason => %s', error)
-      response.status(500).json({})
+      // Default error handler
+      next(error)
     }
   })
 })

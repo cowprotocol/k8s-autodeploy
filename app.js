@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var debug = require('debug')('k8s-autodeploy:app')
 
 var services = require('./routes/services');
 
@@ -32,7 +33,7 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  console.error('[ERROR] ', err);
+  debug('[ERROR] ', err);
 
   // set locals, only providing error in development
   res.locals.message =   res.locals.message = req.app.get('env') === 'development' ? err.message : 'ERROR';
