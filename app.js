@@ -39,7 +39,7 @@ app.use(function(err, req, res, next) {
   debug('[ERROR] ', err);
 
   // set locals, only providing error in development
-  res.locals.message =   res.locals.message = req.app.get('env') === 'development' ? err.message : 'ERROR';
+  res.locals.message =   res.locals.message = req.app.get('env') === 'development' ? err.message : 'ERROR. Contact with our support team';
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
