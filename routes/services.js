@@ -3,6 +3,13 @@ const router = express.Router()
 const spawnSync = require('child_process').spawnSync
 const debug = require('debug')('k8s-autodeploy:services')
 
+class NotSupportedDockerTagError extends Error {
+  constructor (message) {
+    super(message)
+    this.name = 'NotSupportedDockerTagError'
+  }
+}
+
 const executeCommand = (command, args, options = undefined) => {
   let result = spawnSync(command, args, options)
 
@@ -42,11 +49,11 @@ const deployment = {
   }
 }
 
-router.post('/:services/restart', function (req, res, next) {
-  const dockerTag = req.body.push_data.tag
-  const services = req.params.services.split(',')
+router.post('/:services/restart', function (request, response, next) {
+  const dockerTag = request.body.push_data.tag
+  const services = request.params.services.split(',')
 
-  debug('NEW restart request. Services => %s, DockerTag => %s', req.params.services, dockerTag)
+  debug('NEW restart request. Services => %s, DockerTag => %s', request.params.services, dockerTag)
 
   Promise.all(
     services.map(service => {
@@ -56,15 +63,20 @@ router.post('/:services/restart', function (req, res, next) {
           debug('Deployment restarted => %s', deploymentName)
         })
       } else {
-        return Promise.reject(new Error(`This image tag is not supported for autodeploying => ${dockerTag}`))
+        return Promise.reject(new NotSupportedDockerTagError(`This image tag is not supported for autodeploying => ${dockerTag}`))
       }
     })
   ).then(result => {
-    debug('ALL requested deployments have been restarted => %s', req.params.services)
-    res.status(200).json({})
+    debug('ALL requested deployments have been restarted => %s', request.params.services)
+    response.status(200).json({})
   }).catch(error => {
-    debug('[ERROR] Deployment couldn\'t restart. Reason => %s', error)
-    res.status(500).json({})
+    if (error instanceof NotSupportedDockerTagError) {
+      debug('[WARNING] Reason => %s', error)
+      response.status(200).json({})
+    } else {
+      debug('[ERROR] Deployment couldn\'t restart. Reason => %s', error)
+      response.status(500).json({})
+    }
   })
 })
 
