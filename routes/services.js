@@ -72,7 +72,7 @@ router.post('/:services/restart', function (request, response, next) {
   }).catch(error => {
     if (error instanceof NotSupportedDockerTagError) {
       debug('[WARNING] Reason => %s', error)
-      response.status(200).json({})
+      response.status(412).json({})
     } else {
       // Default error handler
       next(error)
