@@ -74,7 +74,10 @@ router.post('/:services/restart', function (request, response, next) {
       debug('[WARNING] Reason => %s', error)
       response.status(412).json({})
     } else if (error.includes('NotFound')) {
-      debug('[WARNING] %s', error)
+      // Replace `Error` word because it is a warning message
+      let warningMessage = error.replace('Error', '')
+
+      debug('[WARNING] %s', warningMessage)
       response.status(412).json({})
     } else {
       // Default error handler
