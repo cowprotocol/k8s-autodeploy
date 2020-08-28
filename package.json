@@ -6,8 +6,8 @@
     "start": "NODE_ENV='production' DEBUG=k8s-autodeploy:* node ./bin/www",
     "dev": "DEBUG=k8s-autodeploy:* node ./bin/www",
     "debug": "DEBUG=* node ./bin/www",
-    "build": "docker build -t k8s-autodeploy . && docker tag k8s-autodeploy 163030813197.dkr.ecr.eu-central-1.amazonaws.com/k8s-autodeploy:v1.6.0",
-    "dist": "docker push 163030813197.dkr.ecr.eu-central-1.amazonaws.com/k8s-autodeploy:v1.6.0"
+    "build": "docker build -t k8s-autodeploy . && docker tag k8s-autodeploy 163030813197.dkr.ecr.eu-central-1.amazonaws.com/k8s-autodeploy:v1.6.1",
+    "dist": "docker push 163030813197.dkr.ecr.eu-central-1.amazonaws.com/k8s-autodeploy:v1.6.1"
   },
   "dependencies": {
     "body-parser": "~1.19.0",
