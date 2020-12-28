@@ -1,0 +1,30 @@
+
+
+variables:
+  DOCKER_PROJECT_NAME: "k8s-autodeploy"
+
+deploy docker:
+  stage: deploy
+  tags:
+    - docker
+  before_script:
+    - apk add --update py-pip curl iptables
+    - dockerd &
+    - DOCKER_PID=$!
+    # Install awscli
+    - pip install awscli
+    - aws --version # print out aws version for debugging
+    - sleep 5
+  script:
+    # See https://docs.gitlab.com/ee/ci/variables/predefined_variables.html
+    - sh scripts/deploy_docker.sh $CI_COMMIT_REF_NAME  # CI_COMMIT_REF_NAME is the name of the branch
+    - kill -SIGINT ${DOCKER_PID}
+    - wait
+  after_script:
+    - kill -SIGINT ${DOCKER_PID}
+    - wait
+
+  only:
+    - master
+    - develop
+    - tags
