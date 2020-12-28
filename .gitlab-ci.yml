@@ -1,7 +1,5 @@
 
-
-variables:
-  DOCKER_PROJECT_NAME: "k8s-autodeploy"
+# All variables are declared through settings > CI
 
 deploy docker:
   stage: deploy
