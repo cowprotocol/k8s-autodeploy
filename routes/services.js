@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const spawnSync = require('child_process').spawnSync
 const debug = require('debug')('k8s-autodeploy:services')
+const config = require('../config')
 
 class NotSupportedDockerTagError extends Error {
   constructor (message) {
@@ -56,6 +57,13 @@ const deployment = {
         return `release-${serviceName}`
       case 'staging':
         return `staging-${serviceName}`
+      default:
+        // If config.ADDITIONAL_DOCKER_TAGS contains the docker tag
+        if(config.ADDITIONAL_DOCKER_TAGS.includes(dockerTag)) {
+          return `${dockerTag}-${serviceName}`
+        } else {
+          return null
+        }
     }
   },
   restart (deploymentName) {
