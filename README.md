@@ -8,7 +8,7 @@ downloaded image.
 Make sure your CI script will call your auto deployment:
 
 ```
-export AUTODEPLOY_URL="https://YOUR_NAMESPACE.auto.gnosisdev.com/services/YOUR_DEPLOYMENT_NAME_1,YOUR_DEPLOYMENT_NAME_2,[...]/restart"
+export AUTODEPLOY_URL="https://YOUR_NAMESPACE.auto.gnosisdev.com/services/YOUR_DEPLOYMENT_NAME_1,YOUR_DEPLOYMENT_NAME_2,[...]/rollout"
 export AUTODEPLOY_TOKEN="Your can set this with `openssl rand -base64 32`"
 export TRAVIS_BRANCH=master
 
