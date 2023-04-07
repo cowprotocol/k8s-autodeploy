@@ -50,7 +50,7 @@ const deployment = {
   getNameFromDockerTag (serviceName, dockerTag) {
     switch (dockerTag) {
       case 'develop':
-        return `dev-${serviceName}`
+        return `${serviceName}`
       case 'nightly':
         return `dev-${serviceName}`
       case 'release':
