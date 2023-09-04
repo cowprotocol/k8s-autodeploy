@@ -11,7 +11,7 @@ router.post('/:images/rollout', async function (request, response, next) {
 
   debug('NEW rollout request. Images => %s, DockerTag => %s', request.params.images, dockerTag)
   // Gets all deployments running any of the given images separated by space
-  const command = `kubectl get deployments -o jsonpath="{range .items[*]}{.metadata.name}{' '}{.spec.template.spec.containers[*].image}{'\\n'}{end}" | grep ${images.join("\|")} | awk '{print $1}' ORS=' '`
+  const command = `kubectl get deployments -o jsonpath="{range .items[*]}{.metadata.name}{' '}{.spec.template.spec.containers[*].image}{'\\n'}{end}" | grep "${images.join("\|")}" | awk '{print $1}' ORS=' '`
   const deployments = (await executeCommand('sh', ['-c', command])).trim();
   debug('Found deployments => %s', deployments)
   await Promise.all(
