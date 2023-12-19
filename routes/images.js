@@ -19,7 +19,7 @@ router.post("/:images/rollout", async function (request, response, next) {
   // returns string like: "deployment1 image1\ndeployment2 image2\n"
   const command = `kubectl get deployments -o jsonpath="{range .items[*]}{.metadata.name}{' '}{.spec.template.spec.containers[*].image}{'\\n'}{end}"`;
 
-  const { stdout } = await executeCommand("sh", ["-c", command]);
+  const stdout = await executeCommand("sh", ["-c", command]);
   const deployments = stdout.trim().split("\n");
 
   // Filter deployments which match the given images
