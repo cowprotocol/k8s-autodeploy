@@ -22,19 +22,27 @@ router.post("/:images/rollout", async function (request, response, next) {
   const { stdout } = await executeCommand("sh", ["-c", command]);
   const deployments = stdout.trim().split("\n");
 
+  // Filter deployments which match the given images
+  const filteredDeployments = deployments.filter((deploymentInfo) => {
+    const [, imageName] = deploymentInfo.split(" ");
+    return images.includes(imageName);
+  });
+
+  debug("Found deployments => %s", filteredDeployments);
+
   response.status(200).json({});
 
-  for (const deploymentInfo of deployments) {
-    const [deploymentName, imageName] = deploymentInfo.split(" ");
-    if (images.includes(imageName)) {
-      try {
-        await deployment.rollout(deploymentName);
-        debug("Deployment rolled out => %s", deploymentName);
-      } catch (error) {
-        debug("Error during rollout => %s", error);
-      }
+  // Note: This approach initiates the rollout process in the background after responding to the request.
+  // It does not handle concurrency control for multiple overlapping requests.
+  filteredDeployments.forEach(async (deploymentInfo) => {
+    const [deploymentName] = deploymentInfo.split(" ");
+    try {
+      await deployment.rollout(deploymentName);
+      debug("Deployment rolled out => %s", deploymentName);
+    } catch (error) {
+      debug("Error during rollout => %s", error.message);
     }
-  }
+  });
 });
 
 module.exports = router;
