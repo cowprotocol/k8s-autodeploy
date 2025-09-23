@@ -18,6 +18,9 @@ const deployment = {
   replaceConfig (config) {
     return executeCommand('kubectl', ['replace', '-f', '-'], {input: config})
   },
+  forceReplaceConfig (config) {
+    return executeCommand('kubectl', ['replace', '--force', '-f', '-'], {input: config})
+  },
   delete (deploymentName) {
     return executeCommand('kubectl', ['delete', 'deployment', deploymentName])
   },
@@ -45,7 +48,7 @@ const deployment = {
   },
   restart (deploymentName) {
     return this.getConfig(deploymentName).then(config => {
-      return this.replaceConfig(config)
+      return this.forceReplaceConfig(config)
     })
   },
   rollout (deploymentName) {

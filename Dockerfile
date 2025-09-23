@@ -1,9 +1,9 @@
-FROM node:10-alpine3.10
+FROM node:24-alpine3.22
 
 # Install Kubectl binary
 RUN apk update && \
 apk add --no-cache bash git openssh curl tini && \
-curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.5/bin/linux/amd64/kubectl && \
+curl -LO https://dl.k8s.io/release/v1.34.1/bin/linux/amd64/kubectl && \
 chmod +x kubectl && mv kubectl /usr/local/bin/kubectl && \
 rm -rf /var/cache/apk/*
 
