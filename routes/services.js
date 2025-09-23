@@ -4,7 +4,7 @@ const debug = require('debug')('k8s-autodeploy:services')
 const { deployment } = require('../util/commands')
 const {NotSupportedDockerTagError, commonErrorHandler} = require('../util/errors');
 
-// Restart deployment
+// Recreate deployment
 router.post('/:services/restart', function (request, response, next) {
   const dockerTag = request.body.push_data.tag
   const services = request.params.services.split(',')
