@@ -34,7 +34,7 @@ router.post("/:images/restart", async function (request, response, next) {
 
   // Note: This approach initiates the recreate process in the background after responding to the request.
   // It does not handle concurrency control for multiple overlapping requests.
-  filteredDeployments.forEach(async (deploymentInfo) => {
+  for(const deploymentInfo of filteredDeployments){
     const [deploymentName] = deploymentInfo.split(" ");
     try {
       await deployment.restart(deploymentName);
@@ -42,7 +42,7 @@ router.post("/:images/restart", async function (request, response, next) {
     } catch (error) {
       debug("Error during restart of %s => %s", deploymentName, error.message);
     }
-  });
+  }
 });
 
 // Rollout all deployments that run a specific image
@@ -75,7 +75,7 @@ router.post("/:images/rollout", async function (request, response, next) {
 
   // Note: This approach initiates the rollout process in the background after responding to the request.
   // It does not handle concurrency control for multiple overlapping requests.
-  filteredDeployments.forEach(async (deploymentInfo) => {
+  for(const deploymentInfo of filteredDeployments){
     const [deploymentName] = deploymentInfo.split(" ");
     try {
       await deployment.rollout(deploymentName);
@@ -83,7 +83,7 @@ router.post("/:images/rollout", async function (request, response, next) {
     } catch (error) {
       debug("Error during rollout of %s => %s", deploymentName, error.message);
     }
-  });
+  }
 });
 
 module.exports = router;
