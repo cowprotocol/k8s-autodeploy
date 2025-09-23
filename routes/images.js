@@ -40,7 +40,7 @@ router.post("/:images/restart", async function (request, response, next) {
       await deployment.restart(deploymentName);
       debug("Deployment restarted => %s", deploymentName);
     } catch (error) {
-      debug("Error during restart of %s => %s", deploymentName, error.message ? error.message : error);
+      debug("Error during restart of %s => %s", deploymentName, error.message);
     }
   });
 });
@@ -81,7 +81,7 @@ router.post("/:images/rollout", async function (request, response, next) {
       await deployment.rollout(deploymentName);
       debug("Deployment rolled out => %s", deploymentName);
     } catch (error) {
-      debug("Error during rollout of %s => %s", deploymentName, error.message ? error.message : error);
+      debug("Error during rollout of %s => %s", deploymentName, error.message);
     }
   });
 });
